@@ -87,6 +87,14 @@ Stack may be more useful for clinically adjacent phenotype recovery and cohort s
 ![Radiology benchmark centroids](results/luad_radiology_benchmark/figures/radiology_centroids.png)
 ![Radiology benchmark metrics](results/luad_radiology_benchmark/figures/radiology_metric_comparison.png)
 
+Bootstrap stability keeps that result intact:
+
+- Stack median radiology `NMI 0.510` vs PCA `0.405`
+- Stack median radiology `ARI 0.217` vs PCA `0.065`
+- Stack median radiology `1-NN 0.333` vs PCA `0.111`
+
+![Radiology bootstrap distributions](results/luad_radiology_bootstrap/figures/radiology_bootstrap_distributions.png)
+
 ## Trial Relevance
 
 The point of this repository is not subtype naming for its own sake. The point is to test whether foundation-model representations can support trial-adjacent cohort enrichment.
@@ -211,6 +219,15 @@ Radiological-type benchmark:
   --output-dir results/luad_radiology_benchmark
 ```
 
+Bootstrap the radiological-type benchmark:
+
+```bash
+.venv311/bin/python scripts/bootstrap_luad_radiology.py \
+  --adata runs/luad_stage_benchmark_300/gse189357_stage_subset.h5ad \
+  --stack-embeddings runs/luad_stage_benchmark_300/gse189357_stage_subset_stack_embeddings.h5ad \
+  --output-dir results/luad_radiology_bootstrap
+```
+
 ## Repository Layout
 
 ```text
@@ -228,5 +245,6 @@ src/stack_stratification/     Package scaffold
 - A Stack-versus-PCA comparison is available under `results/luad_stage_representation_comparison/`.
 - A bootstrap stability analysis is available under `results/luad_stage_bootstrap/`.
 - A radiological-type benchmark is available under `results/luad_radiology_benchmark/`.
+- A radiological-type bootstrap analysis is available under `results/luad_radiology_bootstrap/`.
 - The current analysis uses all cells rather than cell-type-restricted compartments.
 - Pathology-stage recovery is being evaluated descriptively and should not be interpreted as a clinical claim.

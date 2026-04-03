@@ -1,0 +1,24 @@
+[
+  {
+    "representation": "pca",
+    "ari_median": 0.06493506493506493,
+    "ari_mean": 0.06422306566672764,
+    "nmi_median": 0.40490058363640974,
+    "nmi_mean": 0.40419065672393534,
+    "nn_accuracy_median": 0.1111111111111111,
+    "nn_accuracy_mean": 0.085,
+    "silhouette_median": 0.049792686477303505,
+    "silhouette_mean": 0.0500348021206446
+  },
+  {
+    "representation": "stack",
+    "ari_median": 0.21739130434782608,
+    "ari_mean": 0.23980602006688964,
+    "nmi_median": 0.5096070168485125,
+    "nmi_mean": 0.5302808790289982,
+    "nn_accuracy_median": 0.3333333333333333,
+    "nn_accuracy_mean": 0.32888888888888884,
+    "silhouette_median": 0.10273429751396179,
+    "silhouette_mean": 0.10232467837631702
+  }
+]
