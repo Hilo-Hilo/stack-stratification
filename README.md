@@ -71,6 +71,22 @@ Stack is not producing a clean LUAD pathology-stage separator here, but it is co
 
 ![Bootstrap metric distributions](results/luad_stage_bootstrap/figures/bootstrap_metric_distributions.png)
 
+## Radiology Benchmark
+
+The same cohort also includes a public radiological label (`SN`, `pGGN`, `SSN`), which is closer to a clinically used phenotype than the pathology-stage grouping alone.
+
+On that benchmark, Stack looks stronger:
+
+- Stack: `ARI 0.308`, `NMI 0.564`, `1-NN 0.222`, `silhouette 0.109`
+- PCA: `ARI 0.065`, `NMI 0.405`, `1-NN 0.000`, `silhouette 0.055`
+
+That makes the trial-facing story sharper:
+
+Stack may be more useful for clinically adjacent phenotype recovery and cohort slicing than for direct pathology-stage recovery in this small LUAD setting.
+
+![Radiology benchmark centroids](results/luad_radiology_benchmark/figures/radiology_centroids.png)
+![Radiology benchmark metrics](results/luad_radiology_benchmark/figures/radiology_metric_comparison.png)
+
 ## Trial Relevance
 
 The point of this repository is not subtype naming for its own sake. The point is to test whether foundation-model representations can support trial-adjacent cohort enrichment.
@@ -114,7 +130,7 @@ The current result suggests a few immediate next steps:
 
 1. Move from pathology-stage benchmarking toward trial-facing enrichment labels.
 2. Restrict to more relevant compartments instead of mixing all tumor microenvironment cells.
-3. Test whether Stack improves cohort slicing beyond simple baselines for immune- or mutation-linked strata.
+3. Test whether Stack improves cohort slicing beyond simple baselines for immune-, mutation-, or radiology-linked strata.
 4. Add public labels that are closer to treatment selection, resistance, or response biology.
 
 ## Run The Benchmark
@@ -186,6 +202,15 @@ Bootstrap the representation comparison:
   --output-dir results/luad_stage_bootstrap
 ```
 
+Radiological-type benchmark:
+
+```bash
+.venv311/bin/python scripts/benchmark_luad_radiology.py \
+  --adata runs/luad_stage_benchmark_300/gse189357_stage_subset.h5ad \
+  --stack-embeddings runs/luad_stage_benchmark_300/gse189357_stage_subset_stack_embeddings.h5ad \
+  --output-dir results/luad_radiology_benchmark
+```
+
 ## Repository Layout
 
 ```text
@@ -202,5 +227,6 @@ src/stack_stratification/     Package scaffold
 - A compartment follow-up is available under `results/luad_stage_compartments/`.
 - A Stack-versus-PCA comparison is available under `results/luad_stage_representation_comparison/`.
 - A bootstrap stability analysis is available under `results/luad_stage_bootstrap/`.
+- A radiological-type benchmark is available under `results/luad_radiology_benchmark/`.
 - The current analysis uses all cells rather than cell-type-restricted compartments.
 - Pathology-stage recovery is being evaluated descriptively and should not be interpreted as a clinical claim.
