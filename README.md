@@ -95,6 +95,16 @@ Bootstrap stability keeps that result intact:
 
 ![Radiology bootstrap distributions](results/luad_radiology_bootstrap/figures/radiology_bootstrap_distributions.png)
 
+Compartment restriction gives the same directional lesson as the pathology-stage benchmark:
+
+- the strongest radiology signal is still in the all-cell view
+- the immune-only view remains relatively strong
+- epithelial-only radiology recovery drops substantially
+
+So even for the more promising radiological phenotype, the current evidence points toward mixed-cell or microenvironment-aware cohort slicing rather than a clean epithelial-only representation.
+
+![Radiology compartment comparison](results/luad_radiology_compartments/figures/radiology_compartment_comparison.png)
+
 ## Trial Relevance
 
 The point of this repository is not subtype naming for its own sake. The point is to test whether foundation-model representations can support trial-adjacent cohort enrichment.
@@ -228,6 +238,16 @@ Bootstrap the radiological-type benchmark:
   --output-dir results/luad_radiology_bootstrap
 ```
 
+Radiology benchmark across compartments:
+
+```bash
+.venv311/bin/python scripts/analyze_luad_radiology_compartments.py \
+  --adata runs/luad_stage_benchmark_300/gse189357_stage_subset.h5ad \
+  --stack-embeddings runs/luad_stage_benchmark_300/gse189357_stage_subset_stack_embeddings.h5ad \
+  --compartments results/luad_stage_compartments/cell_compartments.csv \
+  --output-dir results/luad_radiology_compartments
+```
+
 ## Repository Layout
 
 ```text
@@ -246,5 +266,6 @@ src/stack_stratification/     Package scaffold
 - A bootstrap stability analysis is available under `results/luad_stage_bootstrap/`.
 - A radiological-type benchmark is available under `results/luad_radiology_benchmark/`.
 - A radiological-type bootstrap analysis is available under `results/luad_radiology_bootstrap/`.
+- A radiological-type compartment analysis is available under `results/luad_radiology_compartments/`.
 - The current analysis uses all cells rather than cell-type-restricted compartments.
 - Pathology-stage recovery is being evaluated descriptively and should not be interpreted as a clinical claim.
