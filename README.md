@@ -20,6 +20,35 @@ The repository now supports a more precise view than the original scaffold:
 
 ![Benchmark summary overview](results/luad_benchmark_summary/figures/benchmark_summary_overview.png)
 
+## Cohort And Labels
+
+The current benchmark battery uses one public single-cell LUAD cohort:
+
+- cohort: `GSE189357`
+- modality: single-cell transcriptomics
+- samples in the main completed run: `9`
+- cells in the main completed run: `2700`
+- pathology labels: `AIS`, `MIA`, `IAC`
+- radiology labels: `SN`, `pGGN`, `SSN`
+
+This makes the current repository a compact translational benchmark, not a production-scale clinical study.
+
+## Method Summary
+
+The current workflow is intentionally simple and explicit:
+
+1. build a combined LUAD AnnData object from the public cohort
+2. subsample a fixed number of cells per sample
+3. generate Stack embeddings for each cell
+4. aggregate cell embeddings to sample centroids
+5. compare unsupervised structure against known labels with `ARI`, `NMI`, `1-NN`, and silhouette
+6. compare Stack against a PCA baseline on the same cells
+7. stress-test the result with bootstrap resampling and compartment-restricted views
+
+This design keeps the current question narrow:
+
+Does a foundation-model representation recover clinically adjacent LUAD structure better than a simpler transcriptomic representation?
+
 ## Main Results
 
 ### Pathology stage benchmark
@@ -72,6 +101,19 @@ The current repo supports four practical conclusions:
 
 The near-term opportunity is to test whether Stack embeddings help define biologically coherent LUAD cohort slices around immune context, mutation-linked programs, or radiographic phenotype in ways that are more useful than conventional expression reductions.
 
+## Why This Matters For Trials
+
+The practical use case is translational enrichment, not automated diagnosis.
+
+If foundation-model embeddings can reproducibly define LUAD cohort slices that line up with radiographic phenotype, immune context, or mutation-linked biology better than simple baselines, they may help with:
+
+- cohort definition for exploratory translational studies
+- biomarker hypothesis generation
+- prioritization of follow-up assays
+- deciding whether a cohort is better understood through mixed-cell context or malignant-only views
+
+The current repo does not justify clinical claims. It is meant to identify whether a trial-relevant signal exists strongly enough to deserve deeper follow-up.
+
 ## Current Artifacts
 
 - Stage benchmark: [results/luad_stage_benchmark_300](results/luad_stage_benchmark_300)
@@ -82,6 +124,26 @@ The near-term opportunity is to test whether Stack embeddings help define biolog
 - Radiology bootstrap: [results/luad_radiology_bootstrap](results/luad_radiology_bootstrap)
 - Radiology compartments: [results/luad_radiology_compartments](results/luad_radiology_compartments)
 - Program summary: [results/luad_benchmark_summary](results/luad_benchmark_summary)
+
+## Repository Layout
+
+- `src/stack_stratification/`: package scaffold and CLI entrypoint
+- `scripts/`: benchmark, comparison, bootstrap, and summary scripts
+- `results/`: committed analysis outputs and figures used in the README
+- `runs/`: local working directories for generated intermediate artifacts
+- `docs/`: methodology, trial framing, and roadmap notes
+- `models/`: local Stack checkpoint assets
+
+## Key Scripts
+
+- `scripts/run_luad_stage_benchmark.py`: build the main stage benchmark run
+- `scripts/analyze_luad_stage_compartments.py`: test coarse compartment restrictions for stage
+- `scripts/compare_luad_stage_representations.py`: compare Stack and PCA on stage
+- `scripts/bootstrap_luad_stage_signal.py`: bootstrap the stage benchmark
+- `scripts/benchmark_luad_radiology.py`: run the radiology benchmark
+- `scripts/bootstrap_luad_radiology.py`: bootstrap the radiology benchmark
+- `scripts/analyze_luad_radiology_compartments.py`: test coarse compartment restrictions for radiology
+- `scripts/summarize_luad_benchmarks.py`: generate the repo-wide scorecard and summary figures
 
 ## Research Direction
 
@@ -100,6 +162,18 @@ The current roadmap is documented in:
 - [docs/trial_relevance.md](docs/trial_relevance.md)
 - [docs/luad_stage_benchmark.md](docs/luad_stage_benchmark.md)
 - [docs/research_roadmap.md](docs/research_roadmap.md)
+
+## Limitations
+
+The current repository has clear limits and the README should state them directly:
+
+- the active benchmark is still a single public cohort
+- sample count is small
+- the compartment split is coarse and marker-based
+- current labels are clinically adjacent, not treatment-response endpoints
+- mixed-cell signal can reflect composition as well as deeper biology
+
+Those constraints are exactly why the next phase should emphasize second-cohort replication, stronger cell-state restriction, and enrichment-style evaluation rather than adding more visualization alone.
 
 ## Run The Analyses
 
