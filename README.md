@@ -1,159 +1,109 @@
 # Stack-Stratification
 
-Stack-Stratification is a compact LUAD benchmarking repository built around ARC Institute Stack embeddings.
+Stack-Stratification is a public LUAD benchmarking repository for testing whether ARC Institute Stack embeddings recover clinically adjacent cohort structure better than simple transcriptomic baselines.
 
-The current repository focus is a concrete question rather than a generic pipeline:
+The current repository is not trying to make a clinical model. It is trying to answer a narrower translational question:
 
-Can unsupervised structure in Stack embeddings recover an already established LUAD pathology label in a small public single-cell cohort?
+Can a foundation-model representation support trial-relevant cohort slicing in public LUAD data, and does it do so better than a simple PCA baseline?
 
-## Current Experiment
+## Current Status
 
-- Cohort: `GSE189357`
-- Modality: single-cell transcriptomics
-- Benchmark label: `AIS` vs `MIA` vs `IAC`
-- Representation layer: ARC Institute `Stack-Large`
-- Analysis unit: cell embeddings aggregated to sample centroids
+Current evidence comes from `GSE189357`, a public LUAD single-cell transcriptomics cohort with pathology-stage labels (`AIS/MIA/IAC`) and radiological labels (`SN/pGGN/SSN`).
 
-## Current Result
+The repository now supports a more precise view than the original scaffold:
 
-The first completed benchmark used `300` cells per sample across `9` LUAD samples (`2700` total cells, balanced `3/3/3` across `AIS/MIA/IAC`).
+- pathology-stage recovery is weak
+- radiology recovery is stronger and more stable
+- Stack consistently beats PCA on the same cohort
+- epithelial-only restriction does not rescue the signal
+- the useful structure looks mixed-cell or microenvironment-aware rather than purely epithelial
 
-Observed agreement between unsupervised sample clustering and pathology stage was weak:
+![Benchmark summary overview](results/luad_benchmark_summary/figures/benchmark_summary_overview.png)
 
-- `ARI`: `0.071`
-- `NMI`: `0.393`
-- `1-NN histology accuracy`: `0.333`
-- `Sample-centroid silhouette by histology`: `0.041`
+## Main Results
 
-That is a useful result, not a failure. On this first completed pass, Stack space does not cleanly separate LUAD pathology stage at the sample-centroid level. The current evidence supports a cautious conclusion:
+### Pathology stage benchmark
 
-Stack embeddings may contain some stage-related structure, but not enough in this setup to claim clean recovery of `AIS/MIA/IAC`.
+All-cell sample-centroid agreement with `AIS/MIA/IAC` remains modest:
 
-## Deeper Cut
+- Stack point estimate: `ARI 0.071`, `NMI 0.393`, `1-NN 0.333`, `silhouette 0.041`
+- PCA point estimate: `ARI -0.118`, `NMI 0.218`, `1-NN 0.111`, `silhouette 0.006`
 
-A marker-based compartment follow-up on the same `2700`-cell run suggests that the modest all-cell signal is not strengthened by restricting to epithelial-like cells.
+Bootstrap resampling keeps the same qualitative result:
 
-- `Epithelial-only`: `ARI -0.161`, `NMI 0.144`, `1-NN 0.222`
-- `Immune-only`: `ARI 0.071`, `NMI 0.393`, `1-NN 0.111`
-- `Endothelial-only`: `ARI 0.200`, `NMI 0.493`, `1-NN 0.375`, but only `8` samples and negative silhouette
+- Stack bootstrap median: `ARI 0.071`, `NMI 0.393`
+- PCA bootstrap median: `ARI -0.118`, `NMI 0.218`
 
-The practical read is that this small benchmark is not showing a clean epithelial stage trajectory in Stack space. If there is useful stage signal here, it is at least partly entangled with non-epithelial structure and sample composition.
+Interpretation: Stack carries more structure than PCA, but this setup does not support a clean pathology-stage enrichment story.
 
-![Compartment metric comparison](results/luad_stage_compartments/figures/compartment_metric_comparison.png)
+### Radiology benchmark
 
-## Baseline Check
+Radiological phenotype is the strongest public label tested so far:
 
-Stack does appear to add signal over a simple PCA baseline on the same data.
+- Stack point estimate: `ARI 0.308`, `NMI 0.564`, `1-NN 0.222`, `silhouette 0.109`
+- PCA point estimate: `ARI 0.065`, `NMI 0.405`, `1-NN 0.000`, `silhouette 0.055`
 
-- `All cells`: Stack `NMI 0.393` vs PCA `0.218`; Stack `ARI 0.071` vs PCA `-0.118`
-- `All cells`: Stack `1-NN 0.333` vs PCA `0.111`
-- `Immune-only`: Stack `NMI 0.393` vs PCA `0.144`
-- `Epithelial-only`: both representations remain weak
+Bootstrap resampling also favors Stack:
 
-So the current repo story is more specific now:
+- Stack bootstrap median: `ARI 0.217`, `NMI 0.510`, `1-NN 0.333`
+- PCA bootstrap median: `ARI 0.065`, `NMI 0.405`, `1-NN 0.111`
 
-Stack is better than a basic PCA baseline here, but the observed signal is still not strong enough to claim clean pathology-stage recovery, especially in epithelial-like cells.
+Interpretation: in this cohort, Stack looks more promising for clinically adjacent phenotype recovery than for direct pathology-stage recovery.
 
-![Stack versus PCA baseline comparison](results/luad_stage_representation_comparison/figures/representation_metric_comparison.png)
+### Compartment follow-up
 
-## Stability Check
+Compartment restriction sharpens the current hypothesis rather than resolving it:
 
-Within-sample bootstrap resampling supports the same basic story.
+- all-cell and immune-rich views retain the strongest signal
+- epithelial-only views are weak for both pathology stage and radiology
+- the radiology signal drops from `NMI 0.564` in all cells to `0.263` in epithelial-only cells
+- the stage signal drops from `NMI 0.393` in all cells to `0.144` in epithelial-only cells
 
-- `All-cell` median `NMI`: Stack `0.393` vs PCA `0.218`
-- `All-cell` median `ARI`: Stack `0.071` vs PCA `-0.118`
-- `Immune-only` median `NMI`: Stack `0.393` vs PCA `0.169`
-- `Epithelial-only` remains weak for both methods, even though Stack is slightly better on median `NMI`
+That matters for trial-facing work. The current value proposition is not "epithelial subtype prediction from a foundation model." It is closer to "microenvironment-aware cohort structure that may support translational enrichment hypotheses."
 
-That makes the current claim more robust:
+## Trial-Facing Read
 
-Stack is not producing a clean LUAD pathology-stage separator here, but it is consistently stronger than a simple PCA baseline under cell-level resampling.
+The current repo supports four practical conclusions:
 
-![Bootstrap metric distributions](results/luad_stage_bootstrap/figures/bootstrap_metric_distributions.png)
+1. Use weak pathology-stage recovery as a cautionary benchmark, not as the lead success criterion.
+2. Treat radiology and other clinically adjacent phenotypes as higher-priority public endpoints.
+3. Benchmark any proposed enrichment story against simple baselines and bootstrap resampling by default.
+4. Do not assume that the best translational signal lives in an epithelial-only slice.
 
-## Radiology Benchmark
+The near-term opportunity is to test whether Stack embeddings help define biologically coherent LUAD cohort slices around immune context, mutation-linked programs, or radiographic phenotype in ways that are more useful than conventional expression reductions.
 
-The same cohort also includes a public radiological label (`SN`, `pGGN`, `SSN`), which is closer to a clinically used phenotype than the pathology-stage grouping alone.
+## Current Artifacts
 
-On that benchmark, Stack looks stronger:
+- Stage benchmark: [results/luad_stage_benchmark_300](results/luad_stage_benchmark_300)
+- Stage compartment follow-up: [results/luad_stage_compartments](results/luad_stage_compartments)
+- Stage Stack versus PCA comparison: [results/luad_stage_representation_comparison](results/luad_stage_representation_comparison)
+- Stage bootstrap: [results/luad_stage_bootstrap](results/luad_stage_bootstrap)
+- Radiology benchmark: [results/luad_radiology_benchmark](results/luad_radiology_benchmark)
+- Radiology bootstrap: [results/luad_radiology_bootstrap](results/luad_radiology_bootstrap)
+- Radiology compartments: [results/luad_radiology_compartments](results/luad_radiology_compartments)
+- Program summary: [results/luad_benchmark_summary](results/luad_benchmark_summary)
 
-- Stack: `ARI 0.308`, `NMI 0.564`, `1-NN 0.222`, `silhouette 0.109`
-- PCA: `ARI 0.065`, `NMI 0.405`, `1-NN 0.000`, `silhouette 0.055`
+## Research Direction
 
-That makes the trial-facing story sharper:
+The next month should focus on whether this radiology-plus-microenvironment signal generalizes and whether it extends to labels that are closer to actual trial design decisions.
 
-Stack may be more useful for clinically adjacent phenotype recovery and cohort slicing than for direct pathology-stage recovery in this small LUAD setting.
+Priority next benchmarks:
 
-![Radiology benchmark centroids](results/luad_radiology_benchmark/figures/radiology_centroids.png)
-![Radiology benchmark metrics](results/luad_radiology_benchmark/figures/radiology_metric_comparison.png)
+1. mutation-linked LUAD cohorts such as `EGFR`- or `KRAS`-associated biology
+2. immune-context labels that can support enrichment-style subgrouping
+3. a more principled malignant-cell-focused restriction instead of coarse marker bins
+4. donor-balanced and cohort-transfer evaluation rather than single-cohort point estimates
 
-Bootstrap stability keeps that result intact:
+The current roadmap is documented in:
 
-- Stack median radiology `NMI 0.510` vs PCA `0.405`
-- Stack median radiology `ARI 0.217` vs PCA `0.065`
-- Stack median radiology `1-NN 0.333` vs PCA `0.111`
+- [docs/project_plan.md](docs/project_plan.md)
+- [docs/trial_relevance.md](docs/trial_relevance.md)
+- [docs/luad_stage_benchmark.md](docs/luad_stage_benchmark.md)
+- [docs/research_roadmap.md](docs/research_roadmap.md)
 
-![Radiology bootstrap distributions](results/luad_radiology_bootstrap/figures/radiology_bootstrap_distributions.png)
+## Run The Analyses
 
-Compartment restriction gives the same directional lesson as the pathology-stage benchmark:
-
-- the strongest radiology signal is still in the all-cell view
-- the immune-only view remains relatively strong
-- epithelial-only radiology recovery drops substantially
-
-So even for the more promising radiological phenotype, the current evidence points toward mixed-cell or microenvironment-aware cohort slicing rather than a clean epithelial-only representation.
-
-![Radiology compartment comparison](results/luad_radiology_compartments/figures/radiology_compartment_comparison.png)
-
-## Trial Relevance
-
-The point of this repository is not subtype naming for its own sake. The point is to test whether foundation-model representations can support trial-adjacent cohort enrichment.
-
-The current evidence suggests:
-
-- Stack is not ready, in this setup, to support a clean `AIS/MIA/IAC` enrichment story
-- Stack does carry more structured signal than a simple PCA baseline
-- The signal appears more entangled with microenvironmental composition than with a clean epithelial stage program
-
-That pushes the trial-facing interpretation in a specific direction:
-
-Near-term value is more likely to come from using foundation-model embeddings to define biologically coherent cohort slices for translational hypothesis generation, especially around immune context, than from claiming direct clinical-stage prediction.
-
-So the next iterations should prioritize labels and endpoints that are closer to actual trial design decisions:
-
-1. immune-inflamed versus immune-suppressed states
-2. mutation-defined cohorts such as `EGFR`- or `KRAS`-linked biology
-3. radiographic or pathology features that influence enrichment strategy
-4. response- or resistance-adjacent public labels when available
-
-## Figures
-
-### Cell embedding view
-
-![Cell embeddings by pathology label](results/luad_stage_benchmark_300/figures/cell_embeddings_by_label.png)
-
-### Sample centroids in Stack space
-
-![Sample centroids](results/luad_stage_benchmark_300/figures/sample_centroids.png)
-
-### Sample-to-sample distances
-
-![Sample distance heatmap](results/luad_stage_benchmark_300/figures/sample_distance_heatmap.png)
-
-## Interpretation
-
-This repository is intentionally framed as a translational benchmark, not a clinical model.
-
-The current result suggests a few immediate next steps:
-
-1. Move from pathology-stage benchmarking toward trial-facing enrichment labels.
-2. Restrict to more relevant compartments instead of mixing all tumor microenvironment cells.
-3. Test whether Stack improves cohort slicing beyond simple baselines for immune-, mutation-, or radiology-linked strata.
-4. Add public labels that are closer to treatment selection, resistance, or response biology.
-
-## Run The Benchmark
-
-Use Python `3.11+` for the experiment runtime.
+Use Python `3.11+`.
 
 ```bash
 python3.11 -m venv .venv311
@@ -161,16 +111,7 @@ source .venv311/bin/activate
 pip install -e .
 ```
 
-Quick pass:
-
-```bash
-.venv311/bin/python scripts/run_luad_stage_benchmark.py \
-  --max-cells-per-sample 80 \
-  --batch-size 4 \
-  --workdir runs/luad_stage_benchmark_quick
-```
-
-Completed larger pass:
+Stage benchmark:
 
 ```bash
 .venv311/bin/python scripts/run_luad_stage_benchmark.py \
@@ -179,40 +120,20 @@ Completed larger pass:
   --workdir runs/luad_stage_benchmark_300
 ```
 
-Detached larger pass with durable logs:
-
-```bash
-zsh scripts/launch_stage_benchmark.sh \
-  --workdir runs/luad_stage_benchmark_overnight \
-  --max-cells-per-sample 300 \
-  --batch-size 8
-
-zsh scripts/status_stage_benchmark.sh \
-  --workdir runs/luad_stage_benchmark_overnight
-```
-
-Compartment follow-up on a completed run:
+Stage follow-ups:
 
 ```bash
 .venv311/bin/python scripts/analyze_luad_stage_compartments.py \
   --adata runs/luad_stage_benchmark_300/gse189357_stage_subset.h5ad \
   --embeddings runs/luad_stage_benchmark_300/gse189357_stage_subset_stack_embeddings.h5ad \
   --output-dir results/luad_stage_compartments
-```
 
-Stack versus PCA baseline comparison:
-
-```bash
 .venv311/bin/python scripts/compare_luad_stage_representations.py \
   --adata runs/luad_stage_benchmark_300/gse189357_stage_subset.h5ad \
   --stack-embeddings runs/luad_stage_benchmark_300/gse189357_stage_subset_stack_embeddings.h5ad \
   --compartments results/luad_stage_compartments/cell_compartments.csv \
   --output-dir results/luad_stage_representation_comparison
-```
 
-Bootstrap the representation comparison:
-
-```bash
 .venv311/bin/python scripts/bootstrap_luad_stage_signal.py \
   --adata runs/luad_stage_benchmark_300/gse189357_stage_subset.h5ad \
   --stack-embeddings runs/luad_stage_benchmark_300/gse189357_stage_subset_stack_embeddings.h5ad \
@@ -220,27 +141,19 @@ Bootstrap the representation comparison:
   --output-dir results/luad_stage_bootstrap
 ```
 
-Radiological-type benchmark:
+Radiology follow-ups:
 
 ```bash
 .venv311/bin/python scripts/benchmark_luad_radiology.py \
   --adata runs/luad_stage_benchmark_300/gse189357_stage_subset.h5ad \
   --stack-embeddings runs/luad_stage_benchmark_300/gse189357_stage_subset_stack_embeddings.h5ad \
   --output-dir results/luad_radiology_benchmark
-```
 
-Bootstrap the radiological-type benchmark:
-
-```bash
 .venv311/bin/python scripts/bootstrap_luad_radiology.py \
   --adata runs/luad_stage_benchmark_300/gse189357_stage_subset.h5ad \
   --stack-embeddings runs/luad_stage_benchmark_300/gse189357_stage_subset_stack_embeddings.h5ad \
   --output-dir results/luad_radiology_bootstrap
-```
 
-Radiology benchmark across compartments:
-
-```bash
 .venv311/bin/python scripts/analyze_luad_radiology_compartments.py \
   --adata runs/luad_stage_benchmark_300/gse189357_stage_subset.h5ad \
   --stack-embeddings runs/luad_stage_benchmark_300/gse189357_stage_subset_stack_embeddings.h5ad \
@@ -248,24 +161,8 @@ Radiology benchmark across compartments:
   --output-dir results/luad_radiology_compartments
 ```
 
-## Repository Layout
+Program summary:
 
-```text
-docs/                         Project notes and methodology
-results/                      Repo-visible benchmark figures and metrics
-scripts/                      Experiment entrypoints and run wrappers
-src/stack_stratification/     Package scaffold
+```bash
+.venv311/bin/python scripts/summarize_luad_benchmarks.py
 ```
-
-## Current Limits
-
-- The first benchmark uses a small subset for speed and debuggability.
-- A smaller `720`-cell quick pass is also retained under `results/luad_stage_benchmark_quick/`.
-- A compartment follow-up is available under `results/luad_stage_compartments/`.
-- A Stack-versus-PCA comparison is available under `results/luad_stage_representation_comparison/`.
-- A bootstrap stability analysis is available under `results/luad_stage_bootstrap/`.
-- A radiological-type benchmark is available under `results/luad_radiology_benchmark/`.
-- A radiological-type bootstrap analysis is available under `results/luad_radiology_bootstrap/`.
-- A radiological-type compartment analysis is available under `results/luad_radiology_compartments/`.
-- The current analysis uses all cells rather than cell-type-restricted compartments.
-- Pathology-stage recovery is being evaluated descriptively and should not be interpreted as a clinical claim.

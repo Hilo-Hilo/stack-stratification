@@ -1,45 +1,55 @@
 # Trial Relevance
 
-## Why this repo exists
+## What this repository is trying to learn
 
-This project is meant to test whether foundation-model embeddings can help define trial-relevant cohort structure in LUAD.
+This project is testing whether foundation-model embeddings can support trial-adjacent cohort enrichment in LUAD.
 
-That is a higher bar than showing a visually interesting embedding or an unsupervised cluster map. A useful result here should say something about whether the representation can support:
+That is a stricter objective than showing that a model produces clusters or visually separated embeddings. A useful result here should support at least one of the following:
 
-- cohort enrichment
+- biologically coherent cohort slicing
+- enrichment-style subgroup definition
 - biomarker hypothesis generation
-- translational subgroup definition
-- comparison against simpler baselines already available to clinical research teams
+- better recovery of clinically adjacent labels than simpler baselines
 
-## What the current result means
+## What the current results say
 
-The current `AIS/MIA/IAC` benchmark is useful because it is public, compact, and easy to reproduce. But it is only an initial screening benchmark.
+The current public benchmark loop supports four claims:
 
-The current evidence says:
+1. Stack beats PCA on the completed LUAD benchmarks.
+2. Direct pathology-stage recovery is weak and should not be oversold.
+3. Radiological phenotype is the strongest clinically adjacent signal tested so far.
+4. The best signal currently lives in all-cell or immune-rich views, not in a coarse epithelial-only restriction.
 
-- Stack is stronger than a simple PCA baseline on this cohort
-- the signal is still weak for direct pathology-stage recovery
-- the signal is not rescued by a simple epithelial-only restriction
-- some of the structure appears to track non-epithelial or microenvironmental variation
+This is important for trial relevance. The repo is not converging on a direct stage-prediction story. It is converging on a more specific translational hypothesis:
 
-## How to keep the work trial-facing
+foundation-model embeddings may be useful for cohort slicing that reflects mixed malignant-plus-microenvironment context, especially around clinically adjacent phenotypes.
 
-Future iterations should ask questions like:
+## What would make the work more trial-facing
 
-1. Does Stack define a cohort slice that could plausibly enrich for an immune context relevant to immunotherapy trials?
-2. Does Stack improve separation of mutation-linked biology over simpler expression baselines?
-3. Are the identified strata stable enough to support prospective cohort definitions?
-4. Is any enrichment signal retained after donor balancing and bootstrap checks?
+The next benchmarks should move closer to actual trial design choices:
 
-## Recommended benchmark order
+1. mutation-linked subgroups such as `EGFR`, `KRAS`, or other public genomic labels
+2. immune-context labels that could support immunotherapy enrichment hypotheses
+3. response- or resistance-adjacent public endpoints when clean data exist
+4. cohort definitions that stay stable under resampling and donor balancing
 
-1. Public label sets tied to immune context or mutation status
-2. Public labels tied to treatment response or resistance, when available
-3. Enrichment-style evaluation rather than pure clustering quality
-4. Stability and baseline comparisons on every benchmark
+## What would count as credible evidence
 
-## What to avoid
+For this repo, a credible trial-facing result should have all of the following:
 
-- Claiming clinical utility from weak unsupervised alignment
-- Treating visually separated embeddings as evidence of actionable enrichment
-- Using trial language without baseline comparisons and stability checks
+- a public and reproducible cohort
+- a baseline comparison against PCA or another simple transcriptomic representation
+- a stability check
+- a label or endpoint that is plausibly useful for cohort enrichment
+- a biological interpretation that does not depend on overclaiming clinical utility
+
+## Current risks
+
+The current work also exposes the main risks for a longer project:
+
+- sample-composition confounding can masquerade as a useful signal
+- single-cohort wins may not transfer
+- epithelial-only restrictions can discard relevant structure if the use case is actually microenvironment-aware
+- weak labels can waste time even when the engineering stack is sound
+
+The right response is not to abandon the project. The right response is to tighten the benchmark program so that every new result answers a clearer translational question.
