@@ -1,0 +1,14 @@
+{
+  "ari_sample_clusters_vs_histology": 0.07142857142857142,
+  "embedding_dim": 1600,
+  "histology_counts": {
+    "AIS": 3,
+    "IAC": 3,
+    "MIA": 3
+  },
+  "n_cells": 720,
+  "n_samples": 9,
+  "nearest_neighbor_histology_accuracy": 0.0,
+  "nmi_sample_clusters_vs_histology": 0.3930065516315366,
+  "silhouette_histology_on_sample_centroids": 0.03649928793311119
+}

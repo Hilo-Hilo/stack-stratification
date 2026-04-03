@@ -1,0 +1,74 @@
+[
+  {
+    "representation": "pca",
+    "compartment": "all",
+    "ari_median": -0.11764705882352941,
+    "ari_mean": -0.117865275142315,
+    "nmi_median": 0.2179136487255354,
+    "nmi_mean": 0.21754302614434473,
+    "nn_accuracy_median": 0.1111111111111111,
+    "nn_accuracy_mean": 0.11555555555555555,
+    "silhouette_median": 0.0025711950147524476,
+    "silhouette_mean": 0.002521090288155392
+  },
+  {
+    "representation": "pca",
+    "compartment": "epithelial",
+    "ari_median": -0.07142857142857142,
+    "ari_mean": -0.09800424184010521,
+    "nmi_median": 0.2503486204735853,
+    "nmi_mean": 0.21070998497122895,
+    "nn_accuracy_median": 0.2222222222222222,
+    "nn_accuracy_mean": 0.20833333333333331,
+    "silhouette_median": -0.07448554039001465,
+    "silhouette_mean": -0.07383570891339332
+  },
+  {
+    "representation": "pca",
+    "compartment": "immune",
+    "ari_median": -0.13333333333333333,
+    "ari_mean": -0.12882727582348075,
+    "nmi_median": 0.16904258874082662,
+    "nmi_mean": 0.18632253968532875,
+    "nn_accuracy_median": 0.1111111111111111,
+    "nn_accuracy_mean": 0.13666666666666666,
+    "silhouette_median": -0.029896816238760948,
+    "silhouette_mean": -0.02985399526078254
+  },
+  {
+    "representation": "stack",
+    "compartment": "all",
+    "ari_median": 0.07142857142857142,
+    "ari_mean": 0.11776190476190475,
+    "nmi_median": 0.3930065516315367,
+    "nmi_mean": 0.42421538835730666,
+    "nn_accuracy_median": 0.2222222222222222,
+    "nn_accuracy_mean": 0.2361111111111111,
+    "silhouette_median": 0.03629307448863983,
+    "silhouette_mean": 0.03654781946912408
+  },
+  {
+    "representation": "stack",
+    "compartment": "epithelial",
+    "ari_median": -0.03225806451612903,
+    "ari_mean": -0.03670639708875003,
+    "nmi_median": 0.29513539794968274,
+    "nmi_mean": 0.2758933759001833,
+    "nn_accuracy_median": 0.2222222222222222,
+    "nn_accuracy_mean": 0.22833333333333333,
+    "silhouette_median": -0.015846939757466316,
+    "silhouette_mean": -0.015866161893791288
+  },
+  {
+    "representation": "stack",
+    "compartment": "immune",
+    "ari_median": 0.07142857142857142,
+    "ari_mean": 0.1026674347158218,
+    "nmi_median": 0.3930065516315366,
+    "nmi_mean": 0.41200091133636435,
+    "nn_accuracy_median": 0.1111111111111111,
+    "nn_accuracy_mean": 0.15611111111111112,
+    "silhouette_median": 0.05247090198099613,
+    "silhouette_mean": 0.05326066884212196
+  }
+]

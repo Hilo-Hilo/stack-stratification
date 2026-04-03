@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stack-stratification"
+version = "0.1.0"
+description = "LUAD stratification scaffold built around ARC Institute Stack embeddings."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Hanson Wen" }
+]
+dependencies = [
+  "anndata>=0.10",
+  "arc-stack>=0.1.3",
+  "matplotlib>=3.9",
+  "numpy>=1.26",
+  "pandas>=2.2",
+  "scanpy>=1.10",
+  "scikit-learn>=1.5",
+  "scipy>=1.13",
+  "seaborn>=0.13",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.4"
+]
+
+[project.scripts]
+stack-stratification = "stack_stratification.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

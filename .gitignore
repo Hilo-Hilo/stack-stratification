@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+.venv311/
+venv/
+env/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Local data and outputs
+data/
+outputs/
+artifacts/
+models/
+runs/
+.tmp/
+.matplotlib/
+
+# Editors
+.DS_Store
+.idea/
+.vscode/

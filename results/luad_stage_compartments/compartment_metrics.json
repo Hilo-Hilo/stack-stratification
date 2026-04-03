@@ -1,0 +1,47 @@
+[
+  {
+    "compartment": "all",
+    "n_cells": 2700,
+    "n_samples": 9,
+    "ari": 0.07142857142857142,
+    "nmi": 0.3930065516315366,
+    "nn_accuracy": 0.3333333333333333,
+    "silhouette": 0.04054605960845947
+  },
+  {
+    "compartment": "epithelial",
+    "n_cells": 375,
+    "n_samples": 9,
+    "ari": -0.16129032258064516,
+    "nmi": 0.14378913248740022,
+    "nn_accuracy": 0.2222222222222222,
+    "silhouette": -0.020410068333148956
+  },
+  {
+    "compartment": "immune",
+    "n_cells": 2138,
+    "n_samples": 9,
+    "ari": 0.07142857142857142,
+    "nmi": 0.3930065516315366,
+    "nn_accuracy": 0.1111111111111111,
+    "silhouette": 0.058187179267406464
+  },
+  {
+    "compartment": "stromal",
+    "n_cells": 78,
+    "n_samples": 9,
+    "ari": 0.07692307692307693,
+    "nmi": 0.35631003654375043,
+    "nn_accuracy": 0.3333333333333333,
+    "silhouette": -0.046035025268793106
+  },
+  {
+    "compartment": "endothelial",
+    "n_cells": 109,
+    "n_samples": 8,
+    "ari": 0.2,
+    "nmi": 0.4925986063135096,
+    "nn_accuracy": 0.375,
+    "silhouette": -0.05295190587639809
+  }
+]
